@@ -72,47 +72,47 @@ print(f'Randomly generated real-time price curve (NOK/kWh per hour) : {price_cur
 # --------------------------------------------------Question 4
 
 
-# # Constants
-# peak_cost = 1  # dollars per kWh during peak hours
-# non_peak_cost = 0.5  # dollars per kWh during non-peak hours
-# peak_hours = range(17, 20)  # Peak hours from 5:00pm to 8:00pm
-# total_power_limit = 2  # Maximum total power usage per hour
+# Constants
+peak_cost = 1  # dollars per kWh during peak hours
+non_peak_cost = 0.5  # dollars per kWh during non-peak hours
+peak_hours = range(17, 20)  # Peak hours from 5:00pm to 8:00pm
+total_power_limit = 2  # Maximum total power usage per hour
 
-# # Power requirements and time constraints for each applicant
-# applicants = [
-#     {"power": 1.94, "hours": range(24)},  # A
-#     {"power": 9.9, "hours": range(24)},  # B
-#     {"power": 1.44, "hours": range(24)},  # C
-#     {"power": 2, "hours": range(10, 20)},  # D
-#     {"power": 9.5, "hours": range(17, 24)}  # E
-# ]
+# Power requirements and time constraints for each applicant
+applicants = [
+    {"power": 1.94, "hours": range(24)},  # A
+    {"power": 9.9, "hours": range(24)},  # B
+    {"power": 1.44, "hours": range(24)},  # C
+    {"power": 2, "hours": range(10, 20)},  # D
+    {"power": 9.5, "hours": range(17, 24)}  # E
+]
 
-# # Objective function coefficients (cost per kWh)
-# costs = []
-# for hour in range(24):
-#     if hour in peak_hours:
-#         costs.append(peak_cost)
-#     else:
-#         costs.append(non_peak_cost)
+# Objective function coefficients (cost per kWh)
+costs = []
+for hour in range(24):
+    if hour in peak_hours:
+        costs.append(peak_cost)
+    else:
+        costs.append(non_peak_cost)
 
-# # Construct the constraint matrix (each row represents an hour)
-# A_eq = np.zeros((24, 24))
-# for hour in range(24):
-#     for applicant in applicants:
-#         if hour in applicant["hours"]:
-#             A_eq[hour, hour] += 1  # Increment power usage for the corresponding hour
+# Construct the constraint matrix (each row represents an hour)
+A_eq = np.zeros((24, 24))
+for hour in range(24):
+    for applicant in applicants:
+        if hour in applicant["hours"]:
+            A_eq[hour, hour] += 1  # Increment power usage for the corresponding hour
 
-# # Define the right-hand side vector (power requirements)
-# b_eq = [total_power_limit] * 24  # Total power usage limit for each hour
+# Define the right-hand side vector (power requirements)
+b_eq = [total_power_limit] * 24  # Total power usage limit for each hour
 
-# # Solve the linear programming problem
-# result = linprog(costs, A_eq=A_eq, b_eq=b_eq)
+# Solve the linear programming problem
+result = linprog(costs, A_eq=A_eq, b_eq=b_eq)
 
-# # Extract the optimal power usage
-# optimal_usage = result.x
+# Extract the optimal power usage
+optimal_usage = result.x
 
-# # Print the optimal power usage and total cost
-# print("Optimal power usage for each hour:")
-# for hour, usage in enumerate(optimal_usage):
-#     print(f"Hour {hour}: {usage:.2f} kWh")
-# print("Total cost:", result.fun, "dollars")
+# Print the optimal power usage and total cost
+print("Optimal power usage for each hour:")
+for hour, usage in enumerate(optimal_usage):
+    print(f"Hour {hour}: {usage:.2f} kWh")
+print("Total cost:", result.fun, "dollars")
