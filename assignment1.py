@@ -39,6 +39,36 @@ import numpy as np
 #     print(f"Hour {hour}: {usage:.2f} kWh")
 # print("Total cost:", result.fun, "dollars")
 
+# --------------------------------------------------Question 2
+
+
+def generate_RTP_price_curve():
+    import random
+    peak_hours = range(17, 20)  # Peak hours from 5:00pm to 8:00pm
+
+    # A random price curve that has a higher values in peak hours
+    # random values are in NOK per kWh
+    price_curve = [
+        random.uniform(0.7, 1) if i in peak_hours else random.uniform(0.6, 0.7)
+        for i in range(24)
+    ]
+    return price_curve
+
+def plot_price_curve(price_curve: list):
+    import matplotlib.pyplot as plt
+    plt.plot(price_curve)
+    plt.xlabel("Hour")
+    plt.ylabel("NOK per kWh")
+    plt.title("Price curve")
+    plt.ylim(0)
+    plt.plot(price_curve, marker="o", linestyle="-")
+    plt.show()
+
+price_curve = generate_RTP_price_curve()
+# plot_price_curve(price_curve)
+print(f'Randomly generated real-time price curve (NOK/kWh per hour) : {price_curve}')
+
+
 # --------------------------------------------------Question 4
 
 
@@ -86,6 +116,3 @@ print("Optimal power usage for each hour:")
 for hour, usage in enumerate(optimal_usage):
     print(f"Hour {hour}: {usage:.2f} kWh")
 print("Total cost:", result.fun, "dollars")
-
-
-
