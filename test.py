@@ -15,21 +15,30 @@ energy_cost = {
 
 # Example data structures
 shiftable_appliances = {
-    "dishwasher": {"energy": 1.5, "earliest_start": 7, "latest_end": 23},
-    "dryer": {"energy": 1.3, "earliest_start": 7, "latest_end": 23},
-    "laundry_machine": {"energy": 2, "earliest_start": 7, "latest_end": 22},
-    "EV": {"energy": 5, "earliest_start": 12, "latest_end": 23}
+    "dishwasher": {"energy": 1.5, "earliest_start": 0, "latest_end": 23},
+    "dryer": {"energy": 1.3, "earliest_start": 0, "latest_end": 23},
+    "laundry_machine": {"energy": 2, "earliest_start": 0, "latest_end": 22},
+    "EV": {"energy": 3, "earliest_start": 0, "latest_end": 23},
+    "C": {"energy": 3, "earliest_start": 0, "latest_end": 23},
+    "D": {"energy": 2, "earliest_start": 0, "latest_end": 23},
+    "E": {"energy": 1.13, "earliest_start": 0, "latest_end": 23},
 }
 
 
 
 non_shiftable_appliances = {
-    "refrigerator": {"energy": 1.2, "start_hour": 0, "end_hour": 23}
+    "refrigerator": {"energy": 1.32, "start_hour": 0, "end_hour": 23}
 }
 
-# Assuming constant electricity price for simplification
-# For variable prices, use a dictionary with hourly prices
-electricity_price = 0.15  # Price per kWh
+threshold = 5
+
+for appliance in non_shiftable_appliances:
+    threshold -= non_shiftable_appliances[appliance]["energy"] / 24
+
+print(threshold)
+
+max_energy_threshold = {hour: threshold for hour in range(24)}
+
 
 
 
@@ -56,6 +65,11 @@ model += pulp.lpSum(x[(appliance, hour)] * shiftable_appliances[appliance]["ener
                     for appliance in shiftable_appliances
                     for hour in range(24))
 
+# Add constraints for maximum energy threshold per hour
+for hour in range(24):
+    model += pulp.lpSum(x[(appliance, hour)] * shiftable_appliances[appliance]["energy"]
+                        for appliance in shiftable_appliances) <= max_energy_threshold[hour]
+
 model.solve()
 
 
@@ -78,7 +92,7 @@ bar_width = 0.35
 index = np.arange(24)
 
 for i, (appliance, costs) in enumerate(schedule_energy_data.items()):
-    ax1.bar(index + i*bar_width, costs, bar_width, label=appliance)
+    ax1.bar((index + i*bar_width*0.25), costs, bar_width, label=appliance)
 
 ax1.set_xlabel('Hour of the Day')
 ax1.set_ylabel('Cost of Energy Used ($)', color='blue')
