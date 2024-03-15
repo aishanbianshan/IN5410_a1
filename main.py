@@ -26,7 +26,7 @@ A_eq[3, :] = 1  # Total power usage constraint
 
 b_eq = power_requirements + [sum(power_requirements)]
 
-result = linprog(cost, A_eq=A_eq, b_eq=b_eq)
+result = linprog(cost, A_eq=A_eq, b_eq=b_eq, method='highs')
 optimal = result.x
 print("Optimal power usage for each hour:")
 for hour, usage in enumerate(optimal):
