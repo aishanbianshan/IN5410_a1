@@ -1,15 +1,24 @@
 import pulp
 import matplotlib.pyplot as plt
 import numpy as np
+import random
+
+from energy import *
 
 
-energy_cost = {hour: 1 if 17 <= hour <= 20 else 0.5 for hour in range(24)}
+
+# energy_cost = {hour: 1 if 17 <= hour <= 20 else 0.5 for hour in range(24)}
+energy_cost = {
+    hour: 1 + random.uniform(-0.125, 0.125) if 17 <= hour <= 20 else 0.5 + random.uniform(-0.2, 0.2)
+    for hour in range(24)
+}
 
 # Example data structures
 shiftable_appliances = {
     "dishwasher": {"energy": 1.5, "earliest_start": 7, "latest_end": 23},
-    "laundry_machine": {"energy": 2, "earliest_start": 7, "latest_end": 23},
-    "EV": {"energy": 5, "earliest_start": 17, "latest_end": 23}
+    "dryer": {"energy": 1.3, "earliest_start": 7, "latest_end": 23},
+    "laundry_machine": {"energy": 2, "earliest_start": 7, "latest_end": 22},
+    "EV": {"energy": 5, "earliest_start": 12, "latest_end": 23}
 }
 
 
@@ -77,7 +86,6 @@ ax1.set_title('Cost of Energy Used by Shiftable Appliances and Energy Cost per H
 ax1.set_xticks(index + bar_width / 2)
 ax1.set_xticklabels(range(24))
 ax1.tick_params(axis='y', labelcolor='blue')
-ax1.legend(loc='upper left')
 
 # Line plot for the cost of energy per kWh
 ax2 = ax1.twinx()  # instantiate a second axes that shares the same x-axis
