@@ -1,41 +1,52 @@
 import random
-import matplotlib.pyplot as plt
 
 def time_of_use(peak_hours: range, peak_cost: float, non_peak_cost: float):
-    """
-    @param peak_hours - list of peak hours
-    @param peak_cost - the cost of energy during peak hours
-    @param non_peak_cost - the cost of energy during non-peak hours
-    returns a list of energy prices varying from peak and non-peak hours
-    """
-    return [peak_cost if hour in peak_hours else non_peak_cost for hour in range(24)]
-
+    return {hour: peak_cost if hour in peak_hours else non_peak_cost for hour in range(24)}
 
 def real_time_pricing(peak_hours: range, peak_cost: float, non_peak_cost: float, fluctuation: float):
-    return [peak_cost + random.uniform(-fluctuation, fluctuation) if hour in peak_hours
-            else non_peak_cost + random.uniform(-fluctuation, fluctuation)
-            for hour in range(24)]
+    return {
+        hour: peak_cost + random.uniform(-fluctuation, fluctuation) if hour in peak_hours
+        else non_peak_cost + random.uniform(-fluctuation, fluctuation)
+        for hour in range(24)
+    }
 
 
-def plot_price_curve(price_curve: list):
-    plt.plot(price_curve)
-    plt.xlabel("Hour")
-    plt.ylabel("NOK per kWh")
-    plt.title("Price curve")
-    plt.ylim(0)
-    plt.plot(price_curve, marker="o", linestyle="-")
-    plt.show()
+# Function to calculate the adjusted energy threshold for each hour
+def adjust_energy_threshold(non_shiftable_appliances, threshold):
+    adjusted_threshold = {hour: threshold for hour in range(24)}
+
+    for appliance, details in non_shiftable_appliances.items():
+        daily_energy = details["energy"]
+        operational_hours = len(details["hours"])
+        hourly_energy = daily_energy / operational_hours  # Calculate hourly energy usage
+
+        for hour in details["hours"]:
+            if isinstance(hour, range):  # If the hours are specified as a range
+                for h in hour:
+                    adjusted_threshold[h] -= hourly_energy
+            else:
+                adjusted_threshold[hour] -= hourly_energy  # Subtract the hourly energy from the threshold
+
+    return adjusted_threshold
 
 
 if __name__ == "__main__":
+    import matplotlib.pyplot as plt
     peak_hours = range(17, 20)
     peak_cost = 1
-    non_peak_cost = 0.5
-    fluctuations = 0.125
-    hourly_cost_tou = time_of_use(peak_hours, peak_cost, non_peak_cost)
-    print(hourly_cost_tou)
-    hourly_cost_rtp = real_time_pricing(peak_hours, peak_cost, non_peak_cost, fluctuations)
-    print(hourly_cost_rtp)
-    plot_price_curve(hourly_cost_rtp)
+    normal_cost = 0.5
+    fluctuation = 0.125
 
+    pricing = real_time_pricing(peak_hours, peak_cost, normal_cost, fluctuation)
 
+    # Plot the data
+    hours = list(pricing.keys())
+    costs = list(pricing.values())
+
+    plt.figure(figsize=(10, 6))
+    plt.plot(hours, costs, marker='o', linestyle='-', color='blue')
+    plt.title('Real-Time Pricing Curve')
+    plt.xlabel('Hour of the Day')
+    plt.ylabel('Cost (NOK/KWh)')
+    plt.xticks(hours)
+    plt.show()
