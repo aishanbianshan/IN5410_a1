@@ -79,6 +79,8 @@ status = model.solve()
 print("Status:", pulp.LpStatus[status])
 
 
+total_energy = 0
+
 schedule_energy_data = {appliance: [0 for hour in range(24)] for appliance in shiftable_appliances}
 
 for appliance in shiftable_appliances:
@@ -86,7 +88,13 @@ for appliance in shiftable_appliances:
         if pulp.value(x[(appliance, hour)]) == 1:
             # Apply the energy cost for the current hour to the energy usage
             schedule_energy_data[appliance][hour] = shiftable_appliances[appliance]["energy"] * energy_cost[hour]
+            total_energy += schedule_energy_data[appliance][hour]
 
+total_energy_non = sum(appliance["energy"] for appliance in non_shiftable_appliances.values())
+
+total_sum = total_energy + total_energy_non
+
+print(total_sum)
 
 fig, ax1 = plt.subplots(figsize=(12, 8))
 
