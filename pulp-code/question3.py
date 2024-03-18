@@ -15,6 +15,8 @@ fluctuation = 0.125
 household_number = 30
 ev_fraction = 5
 
+random.seed(6)
+
 energy_cost = real_time_pricing(peak_hours, peak_cost, normal_cost, fluctuation)
 
 shiftable_appliances_ev = {
@@ -144,7 +146,7 @@ fig, ax1 = plt.subplots(figsize=(12, 8))
 bar_width = 0.35
 index = np.arange(24)
 
-for i, (appliance, costs) in enumerate(schedule_energy_data.items()):
+for i, (appliance, costs) in enumerate(schedule_energy_data_ev.items()):
     ax1.bar((index - i*bar_width*0.8), costs, bar_width, label=appliance)
 
 ax1.set_xlabel('Hour of the Day')

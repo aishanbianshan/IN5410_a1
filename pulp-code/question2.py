@@ -12,6 +12,8 @@ peak_cost = 1
 normal_cost = 0.5
 fluctuation = 0.125
 
+random.seed(6)
+
 energy_cost = real_time_pricing(peak_hours, peak_cost, normal_cost, fluctuation)
 
 shiftable_appliances = {
@@ -79,8 +81,12 @@ for appliance in shiftable_appliances:
             total_energy += schedule_energy_data[appliance][hour]
 
 
+total_energy_non = sum(appliance["energy"] for appliance in non_shiftable_appliances.values())
 
-print(total_energy)
+total_sum = total_energy + total_energy_non
+
+print(total_energy_non)
+print(total_sum)
 
 fig, ax1 = plt.subplots(figsize=(12, 8))
 
