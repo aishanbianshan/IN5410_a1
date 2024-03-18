@@ -20,6 +20,7 @@ shiftable_appliances = {
     # Dishwasher and laundry machine can only be used when noise is tolerated
     "Dishwasher": {"energy": 1.44, "hours": range(7,22)},
     "Laundry machine": {"energy": 1.94, "hours": range(7,22)},
+    "Dryer": {"energy": 2.5, "hours": range(7,22)},
 }
 
 non_shiftable_appliances = {
@@ -78,7 +79,7 @@ for appliance in shiftable_appliances:
             total_energy += schedule_energy_data[appliance][hour]
 
 
-# Should be 6.64 (total energy needed * lowest price (0.5))
+
 print(total_energy)
 
 fig, ax1 = plt.subplots(figsize=(12, 8))
