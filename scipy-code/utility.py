@@ -1,5 +1,3 @@
-from scipy.optimize import linprog
-import numpy as np
 import matplotlib.pyplot as plt
 
 # Constants
