@@ -10,6 +10,8 @@ peak_cost = 1
 normal_cost = 0.5
 fluctuation = 0.125
 
+random.seed(6)
+
 #energy_cost = time_of_use(peak_hours, peak_cost, normal_cost)
 energy_cost = real_time_pricing(peak_hours, peak_cost, normal_cost, fluctuation)
 

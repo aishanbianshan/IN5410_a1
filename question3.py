@@ -15,6 +15,8 @@ fluctuation = 0.125
 household_number = 30
 ev_fraction = 5
 
+random.seed(6)
+
 energy_cost = real_time_pricing(peak_hours, peak_cost, normal_cost, fluctuation)
 
 shiftable_appliances_ev = {

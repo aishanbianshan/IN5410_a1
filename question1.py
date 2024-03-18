@@ -11,6 +11,8 @@ peak_hours = range(17, 20)
 peak_cost = 1
 normal_cost = 0.5
 
+random.seed(6)
+
 energy_cost = time_of_use(peak_hours, peak_cost, normal_cost)
 
 shiftable_appliances = {
