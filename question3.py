@@ -146,7 +146,7 @@ fig, ax1 = plt.subplots(figsize=(12, 8))
 bar_width = 0.35
 index = np.arange(24)
 
-for i, (appliance, costs) in enumerate(schedule_energy_data.items()):
+for i, (appliance, costs) in enumerate(schedule_energy_data_ev.items()):
     ax1.bar((index - i*bar_width*0.8), costs, bar_width, label=appliance)
 
 ax1.set_xlabel('Hour of the Day')
