@@ -81,8 +81,12 @@ for appliance in shiftable_appliances:
             total_energy += schedule_energy_data[appliance][hour]
 
 
+total_energy_non = sum(appliance["energy"] for appliance in non_shiftable_appliances.values())
 
-print(total_energy)
+total_sum = total_energy + total_energy_non
+
+print(total_energy_non)
+print(total_sum)
 
 fig, ax1 = plt.subplots(figsize=(12, 8))
 
