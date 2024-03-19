@@ -3,7 +3,6 @@ you may need to consider some questions. Is it reasonable to use all three appli
 the same time, e.g., 2:00am which has the low energy price? How should we distribute
 the power load more reasonably in the timeline?"""
 import pulp
-import numpy as np
 from energy import *
 from plotting import *
 
@@ -77,7 +76,7 @@ for appliance in shiftable_appliances:
         if pulp.value(x[(appliance, hour)]) == 1:
             # Apply the energy cost for the current hour to the energy usage
             schedule_energy_data[appliance][hour] = shiftable_appliances[appliance]["energy"]
-            total_energy += schedule_energy_data[appliance][hour]
+            total_energy += schedule_energy_data[appliance][hour] * energy_cost[hour]
 
 
 total_energy_non = sum(appliance["energy"] for appliance in non_shiftable_appliances.values())

@@ -1,7 +1,4 @@
 import pulp
-import numpy as np
-import matplotlib.pyplot as plt
-
 from energy import *
 from plotting import *
 
@@ -85,7 +82,7 @@ for appliance in shiftable_appliances:
         if pulp.value(x[(appliance, hour)]) == 1:
             # Apply the energy cost for the current hour to the energy usage
             schedule_energy_data[appliance][hour] = shiftable_appliances[appliance]["energy"]
-            total_energy += schedule_energy_data[appliance][hour]
+            total_energy += schedule_energy_data[appliance][hour] * energy_cost[hour]
 
 total_energy_non = sum(appliance["energy"] for appliance in non_shiftable_appliances.values())
 

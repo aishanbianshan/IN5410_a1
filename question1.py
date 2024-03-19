@@ -62,7 +62,7 @@ for appliance in shiftable_appliances:
         if pulp.value(x[(appliance, hour)]) == 1:
             # Apply the energy cost for the current hour to the energy usage
             schedule_energy_data[appliance][hour] = shiftable_appliances[appliance]["energy"]
-            total_energy += schedule_energy_data[appliance][hour]
+            total_energy += schedule_energy_data[appliance][hour] * energy_cost[hour]
 
 # Should be 6.64 (total energy needed * lowest price (0.5))
 print(total_energy)
