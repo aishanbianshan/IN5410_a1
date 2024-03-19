@@ -1,5 +1,7 @@
 import random
 
+random.seed(6)
+
 def time_of_use(peak_hours: range, peak_cost: float, non_peak_cost: float):
     return {hour: peak_cost if hour in peak_hours else non_peak_cost for hour in range(24)}
 
@@ -10,6 +12,12 @@ def real_time_pricing(peak_hours: range, peak_cost: float, non_peak_cost: float,
         for hour in range(24)
     }
 
+def real_time_pricing_scipy(peak_hours: range, peak_cost: float, non_peak_cost: float):
+
+    return {
+        hour: random.uniform(1, 1.5) if hour in peak_hours else random.uniform(0.6, 0.7)
+        for hour in range(24)
+    }
 
 # Function to calculate the adjusted energy threshold for each hour
 def adjust_energy_threshold(non_shiftable_appliances, threshold):
@@ -37,7 +45,7 @@ if __name__ == "__main__":
     normal_cost = 0.5
     fluctuation = 0.125
 
-    pricing = real_time_pricing(peak_hours, peak_cost, normal_cost, fluctuation)
+    pricing = real_time_pricing_scipy(peak_hours, peak_cost, normal_cost)
 
     # Plot the data
     hours = list(pricing.keys())

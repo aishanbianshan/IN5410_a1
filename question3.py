@@ -10,14 +10,13 @@ from plotting import *
 peak_hours = range(17, 20)
 peak_cost = 1
 normal_cost = 0.5
-fluctuation = 0.125
 
 household_number = 30
 ev_fraction = 5
 
 random.seed(6)
 
-energy_cost = real_time_pricing(peak_hours, peak_cost, normal_cost, fluctuation)
+energy_cost = real_time_pricing_scipy(peak_hours, peak_cost, normal_cost)
 
 shiftable_appliances_ev = {
     # EV can be charged before and after work, and can also be divided among the hours, we assume it takes 4 hours to charge
@@ -126,7 +125,7 @@ for appliance in shiftable_appliances_ev:
     for hour in range(24):
         if pulp.value(x_ev[(appliance, hour)]) == 1:
             # Apply the energy cost for the current hour to the energy usage
-            schedule_energy_data_ev[appliance][hour] = shiftable_appliances_ev[appliance]["energy"] * energy_cost[hour]
+            schedule_energy_data_ev[appliance][hour] = shiftable_appliances_ev[appliance]["energy"]
             total_energy += schedule_energy_data_ev[appliance][hour]
 
 total_energy_ev *= ev_fraction
@@ -140,33 +139,5 @@ print(total_sum)
 
 ## Plotting
 
-
-fig, ax1 = plt.subplots(figsize=(12, 8))
-
-bar_width = 0.35
-index = np.arange(24)
-
-for i, (appliance, costs) in enumerate(schedule_energy_data_ev.items()):
-    ax1.bar((index - i*bar_width*0.8), costs, bar_width, label=appliance)
-
-ax1.set_xlabel('Hour of the Day')
-ax1.set_ylabel('Cost of Energy Used ($)', color='blue')
-ax1.set_title('Cost of Energy Used by Appliances')
-plt.xticks(index, [f"{i}:00" for i in range(24)], rotation=45)
-ax1.tick_params(axis='y', labelcolor='blue')
-
-
-# Line plot for the cost of energy per kWh
-ax2 = ax1.twinx()  # instantiate a second axes that shares the same x-axis
-energy_cost_values = list(energy_cost.values())
-ax2.plot(index, energy_cost_values, color='purple', label='Energy Cost per kWh')
-ax2.set_ylabel('Energy Cost per kWh ($)', color='purple')
-ax2.tick_params(axis='y', labelcolor='purple')
-
-# Adding a legend for the line plot
-lines, labels = ax1.get_legend_handles_labels()
-lines2, labels2 = ax2.get_legend_handles_labels()
-ax2.legend(lines + lines2, labels + labels2, loc='upper left')
-
-
-plt.show()
+plot(schedule_energy_data, energy_cost)
+plot(schedule_energy_data_ev, energy_cost)
