@@ -46,6 +46,7 @@ def plot(schedule_energy_data, energy_cost):
 
 
 def plot_threshold(schedule_energy_data, energy_cost, max_energy):
+    # plotting for question 4, threshold line
     fig, ax1 = plt.subplots(figsize=(12, 8))
 
     bar_width = 0.35

@@ -66,7 +66,6 @@ for hour in range(24):
 model += pulp.lpSum(x[(appliance, hour)] * shiftable_appliances[appliance]["energy"] * energy_cost[hour]
                     for appliance in shiftable_appliances for hour in range(24) if hour in shiftable_appliances[appliance]["hours"])
 
-# Solve the model
 status = model.solve()
 
 # Check and print the status
