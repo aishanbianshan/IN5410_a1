@@ -82,8 +82,8 @@ for appliance in shiftable_appliances:
     for hour in range(24):
         if pulp.value(x[(appliance, hour)]) == 1:
             # Apply the energy cost for the current hour to the energy usage
-            schedule_energy_data[appliance][hour] = shiftable_appliances[appliance]["energy"] * energy_cost[hour]
-            total_energy += schedule_energy_data[appliance][hour]
+            schedule_energy_data[appliance][hour] = shiftable_appliances[appliance]["energy"]
+            total_energy += schedule_energy_data[appliance][hour] * energy_cost[hour]
 
 
 # Model with EV
@@ -125,7 +125,7 @@ for appliance in shiftable_appliances_ev:
         if pulp.value(x_ev[(appliance, hour)]) == 1:
             # Apply the energy cost for the current hour to the energy usage
             schedule_energy_data_ev[appliance][hour] = shiftable_appliances_ev[appliance]["energy"]
-            total_energy += schedule_energy_data[appliance][hour] * energy_cost[hour]
+            total_energy += schedule_energy_data_ev[appliance][hour] * energy_cost[hour]
 
 total_energy_ev *= ev_fraction
 total_energy *= (household_number - ev_fraction)
