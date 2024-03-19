@@ -90,4 +90,4 @@ total_sum = total_energy + total_energy_non
 
 print(total_sum)
 
-plot(schedule_energy_data, energy_cost)
+plot_threshold(schedule_energy_data, energy_cost, max_energy)
