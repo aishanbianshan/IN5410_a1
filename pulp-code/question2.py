@@ -1,7 +1,3 @@
-"""We need a strategy, not just the amount of the minimal energy cost. For example,
-you may need to consider some questions. Is it reasonable to use all three appliances at
-the same time, e.g., 2:00am which has the low energy price? How should we distribute
-the power load more reasonably in the timeline?"""
 import pulp
 from energy import *
 from plotting import *
