@@ -1,19 +1,14 @@
 import pulp
-import numpy as np
-import matplotlib.pyplot as plt
-
 from energy import *
 from plotting import *
 
 peak_hours = range(17, 20)
 peak_cost = 1
 normal_cost = 0.5
-fluctuation = 0.125
 
 random.seed(6)
 
-#energy_cost = time_of_use(peak_hours, peak_cost, normal_cost)
-energy_cost = real_time_pricing(peak_hours, peak_cost, normal_cost, fluctuation)
+energy_cost = real_time_pricing_scipy(peak_hours, peak_cost, normal_cost)
 
 
 shiftable_appliances = {
@@ -37,11 +32,8 @@ non_shiftable_appliances = {
     "Microwave": {"energy": 1.2, "hours": range(17, 18)},
 }
 
-
 threshold = 5
 max_energy = adjust_energy_threshold(non_shiftable_appliances, threshold)
-
-
 
 # Create the optimization model
 model = pulp.LpProblem("ApplianceScheduling", pulp.LpMinimize)
@@ -89,8 +81,8 @@ for appliance in shiftable_appliances:
     for hour in range(24):
         if pulp.value(x[(appliance, hour)]) == 1:
             # Apply the energy cost for the current hour to the energy usage
-            schedule_energy_data[appliance][hour] = shiftable_appliances[appliance]["energy"] * energy_cost[hour]
-            total_energy += schedule_energy_data[appliance][hour]
+            schedule_energy_data[appliance][hour] = shiftable_appliances[appliance]["energy"]
+            total_energy += schedule_energy_data[appliance][hour] * energy_cost[hour]
 
 total_energy_non = sum(appliance["energy"] for appliance in non_shiftable_appliances.values())
 
@@ -98,42 +90,4 @@ total_sum = total_energy + total_energy_non
 
 print(total_sum)
 
-fig, ax1 = plt.subplots(figsize=(12, 8))
-
-bar_width = 0.35
-index = np.arange(24)
-
-for i, (appliance, costs) in enumerate(schedule_energy_data.items()):
-    ax1.bar((index - i*bar_width*0.5), costs, bar_width, label=appliance)
-
-ax1.set_xlabel('Hour of the Day')
-ax1.set_ylabel('Cost of Energy Used ($)', color='blue')
-ax1.set_title('Cost of Energy Used by Shiftable Appliances and Energy Cost per Hour')
-plt.xticks(index, [f"{i}:00" for i in range(24)], rotation=45)
-ax1.tick_params(axis='y', labelcolor='blue')
-
-
-
-# Line plot for the cost of energy per kWh
-ax2 = ax1.twinx()  # instantiate a second axes that shares the same x-axis
-energy_cost_values = list(energy_cost.values())
-ax2.plot(index, energy_cost_values, color='purple', label='Energy Cost per kWh')
-ax2.set_ylabel('Energy Cost per kWh ($)', color='purple')
-ax2.tick_params(axis='y', labelcolor='purple')
-
-adjusted_threshold_values = [max_energy[hour]*.4 for hour in range(24)]
-ax1.plot(index, adjusted_threshold_values, color='red', label='Energy Threshold')
-
-
-# Adding a legend for the line plot
-lines, labels = ax1.get_legend_handles_labels()
-lines2, labels2 = ax2.get_legend_handles_labels()
-ax2.legend(lines, labels, loc='upper left')
-
-filename = "question4"
-tikzplotlib_fix_ncols(plt.gcf())
-tikzplotlib.save(output + filename + ".tex",
-                 axis_height='\\figH',
-                 axis_width='\\figW')
-
-plt.show()
+plot_threshold(schedule_energy_data, energy_cost, max_energy)

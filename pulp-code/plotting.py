@@ -1,4 +1,5 @@
 import matplotlib.pyplot as plt
+import numpy as np
 import tikzplotlib
 
 output = "figures/"
@@ -13,27 +14,66 @@ def tikzplotlib_fix_ncols(obj):
         tikzplotlib_fix_ncols(child)
 
 
-def plot_price_curve_vs_usage(costs: list, usage: list) -> None:
-    ''' Plot the price curve and the usage curve in the same graph
+def plot(schedule_energy_data, energy_cost):
+    fig, ax1 = plt.subplots(figsize=(12, 8))
 
-    Args:
-        price_curve: list of float, the price curve in NOK per kWh
-        usage: list of float, the usage in kWh for each hour. Example: [(10, 5.5)] for 5.5 kWh at 10:00am
+    bar_width = 0.35
+    index = np.arange(24)
 
-    Returns:
-        None
-    '''
-    title = ""
-    # plotting the optimal power usage against the price curve
-    plt.step(range(24), costs, label="Price curve (NOK/kWh)")
-    plt.step(range(24), usage, label="Optimal power usage (kWh)")
-    plt.xlabel("Hour")
-    # xticks are the hours of the day formatted hour
-    plt.xticks(range(24), [f"{i}:00" for i in range(24)], rotation=45)
-    title = "Optimal power usage vs price curve"
-    plt.legend()
-    fig = plt.gcf()
-    tikzplotlib_fix_ncols(fig)
-    tikzplotlib.save(output + title + ".tex",
-                     axis_height='\\figH',
-                     axis_width='\\figW')
+    for i, (appliance, energy) in enumerate(schedule_energy_data.items()):
+        ax1.bar((index - i*bar_width*0.8), energy, bar_width, label=appliance)
+
+    ax1.set_xlabel('Hour of the Day')
+    ax1.set_ylabel('Energy consumption in kWh', color='black')
+    ax1.set_title('Cost of Energy Used by Appliances')
+    plt.xticks(index, [f"{i}:00" for i in range(24)], rotation=45)
+    ax1.tick_params(axis='y', labelcolor='black')
+
+
+    # Line plot for the cost of energy per kWh
+    ax2 = ax1.twinx()  # instantiate a second axes that shares the same x-axis
+    energy_cost_values = list(energy_cost.values())
+    ax2.plot(index, energy_cost_values, color='purple', label='Energy Cost per kWh')
+    ax2.set_ylabel('Price Curve (NOK/kWh)', color='purple')
+    ax2.tick_params(axis='y', labelcolor='purple')
+
+    # Adding a legend for the line plot
+    lines, labels = ax1.get_legend_handles_labels()
+    lines2, labels2 = ax2.get_legend_handles_labels()
+    ax2.legend(lines, labels, loc='upper left')
+    plt.tight_layout()
+    plt.show()
+
+
+def plot_threshold(schedule_energy_data, energy_cost, max_energy):
+    fig, ax1 = plt.subplots(figsize=(12, 8))
+
+    bar_width = 0.35
+    index = np.arange(24)
+
+    for i, (appliance, energy) in enumerate(schedule_energy_data.items()):
+        ax1.bar((index - i*bar_width*0.8), energy, bar_width, label=appliance)
+
+    ax1.set_xlabel('Hour of the Day')
+    ax1.set_ylabel('Energy consumption in kWh', color='black')
+    ax1.set_title('Cost of Energy Used by Appliances')
+    plt.xticks(index, [f"{i}:00" for i in range(24)], rotation=45)
+    ax1.tick_params(axis='y', labelcolor='black')
+
+
+    # Line plot for the cost of energy per kWh
+    ax2 = ax1.twinx()  # instantiate a second axes that shares the same x-axis
+    energy_cost_values = list(energy_cost.values())
+    ax2.plot(index, energy_cost_values, color='purple', label='Energy Cost per kWh')
+    ax2.set_ylabel('Price Curve (NOK/kWh)', color='purple')
+    ax2.tick_params(axis='y', labelcolor='purple')
+
+    adjusted_threshold_values = [max_energy[hour]*.4 for hour in range(24)]
+    ax1.plot(index, adjusted_threshold_values, color='red', label='Energy Threshold')
+
+    # Adding a legend for the line plot
+    lines, labels = ax1.get_legend_handles_labels()
+    lines2, labels2 = ax2.get_legend_handles_labels()
+    ax2.legend(lines, labels, loc='upper left')
+    plt.tight_layout()
+    plt.show()
